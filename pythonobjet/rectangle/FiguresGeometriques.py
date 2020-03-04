@@ -2,21 +2,26 @@ from math import pi
 
 from pythonobjet.point.Point import Point
 
+class FigureGeometrique:
 
-class Rectangle:
+    def __init__(self, origine):
+        self.origine = origine
+
+    def move(self, dx, dy):
+        self.origine.move(dx, dy)
+
+
+class Rectangle(FigureGeometrique):
     """Ma classe"""
 
     def __init__(self, origine, longueur, largeur):
         self.longueur = longueur
         self.largeur = largeur
-        self.origine = origine
+
 
     def toString(self):
         s = f'rectangle origine={self.origine.toString()} longueur={self.longueur} larger={self.largeur} perimeter={self.perimetre()} surface={self.surface()}'
         return s
-
-    def move(self, dx, dy):
-        self.origine.move(dx, dy)
 
     def perimetre(self):
         return 2 * (self.largeur + self.longueur)
@@ -25,19 +30,15 @@ class Rectangle:
         return self.largeur * self.longueur
 
 
-class Cercle:
+class Cercle(FigureGeometrique):
     """Ma classe"""
 
     def __init__(self, origine, rayon):
         self.rayon = rayon
-        self.origine = origine
 
     def toString(self):
         s = f'cercle: origine={self.origine.toString()} rayon={self.rayon} perimeter={self.perimetre()} surface={self.surface()}'
         return s
-
-    def move(self, dx, dy):
-        self.origine.move(dx, dy)
 
     def perimetre(self):
         return 2 * pi * self.rayon
