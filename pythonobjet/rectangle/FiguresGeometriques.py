@@ -17,6 +17,7 @@ class Rectangle(FigureGeometrique):
     def __init__(self, origine, longueur, largeur):
         self.longueur = longueur
         self.largeur = largeur
+        FigureGeometrique.__init__(self, origine)
 
 
     def toString(self):
@@ -35,6 +36,7 @@ class Cercle(FigureGeometrique):
 
     def __init__(self, origine, rayon):
         self.rayon = rayon
+        FigureGeometrique.__init__(self, origine)
 
     def toString(self):
         s = f'cercle: origine={self.origine.toString()} rayon={self.rayon} perimeter={self.perimetre()} surface={self.surface()}'
