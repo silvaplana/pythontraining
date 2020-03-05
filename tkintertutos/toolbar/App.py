@@ -3,29 +3,8 @@ from tkinter import *
 import PIL
 from PIL import Image, ImageTk
 
-class Example(Frame):
-    def __init__(self, parent):
-        Frame.__init__(self, parent)
-
-        menubutton = Menubutton(self, text="Choose wisely",
-                                   indicatoron=True, borderwidth=1, relief="raised")
-        menu = Menu(menubutton, tearoff=False)
-        menubutton.configure(menu=menu)
-        menubutton.pack(padx=10, pady=10)
-
-        self.choices = {}
-        for choice in ("Iron Man", "Superman", "Batman","Fartman","Babyman"):
-            self.choices[choice] = IntVar(value=0)
-            menu.add_checkbutton(label=choice, variable=self.choices[choice],
-                                 onvalue=1, offvalue=0,
-                                 command=self.printValues)
-    def printValues(self):
-        print("================================")
-        for name, var in self.choices.items():
-            print (f"{name}: {var.get()}")
-        print("================================")
-
-
+from tkintertutos.toolbar.InfoLabel import InfoLabel
+from tkintertutos.toolbar.LogFileCheckBox import LogFileCheckBox
 
 
 class App():
@@ -61,27 +40,31 @@ class App():
         quitBtn.pack(side=LEFT, fill=X)
 
 
+        fileSelector = LogFileCheckBox(self.toolbar, "File selector")
+        fileSelector.pack(side=LEFT, fill=X)
+        fileMerger = LogFileCheckBox(self.toolbar, "File Merger")
+        fileMerger.pack(side=LEFT, fill=X)
 
-        #Lb1 = Listbox(self.toolbar)
-        #Lb1.insert(1, "Python")
-        #Lb1.insert(2, "Perl")
-        #Lb1.insert(3, "C")
-        #Lb1.insert(4, "PHP")
-        #Lb1.insert(5, "JSP")
-        #Lb1.insert(6, "Ruby")
-        #Lb1.pack(side=LEFT, fill=X)
+        infoLabel = InfoLabel(self.toolbar, "")
 
-        Example(self.toolbar).pack(fill="both", expand=True)
+        infoLabel.pack(side=LEFT, fill=X)
+
+
 
         # Add the toolbar
         self.toolbar.pack(side=TOP, fill=X)
+
+        infoLabel.setText("       Chargement en cours...")
 
         # Set up a Text box and scroll bar.
         self.scrollbar = Scrollbar(self.root)
         self.scrollbar.pack(side=RIGHT, fill=Y)
 
         self.text = Text(self.root)
-        self.text.pack()
+
+
+
+        self.text.pack(expand=True, fill=BOTH)
 
         self.text.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.text.yview)
@@ -91,6 +74,7 @@ class App():
         print ("A button was pressed")
 
 if __name__ == "__main__":
+    print("==================== begin ======================")
     a = App()
     a.root.mainloop()
 
