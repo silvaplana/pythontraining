@@ -1,6 +1,6 @@
 from math import pi
 
-from pythonobjet.point.Point import Point
+from pythonobjet.exo1_formesgeometriques.point.Point import Point
 
 
 class FigureGeometrique:
