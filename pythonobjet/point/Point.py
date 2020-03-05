@@ -10,11 +10,7 @@ class Point:
         self.x = aX
         self.y = aY
 
-    def __repr__(self):
-        s = f'x={self.x} y={self.y}'
-        return s
-
-    def __str__(self):
+    def toString(self):
         s = f'abscisse={self.x} ordonne={self.y}'
         return s
 
@@ -31,17 +27,17 @@ class Point:
 if __name__ == "__main__":
     print("================ debut ==================")
     p1 = Point(0, 0)
-    print("p1  (str)=", p1)
+    print("p1=", p1.toString())
     p2 = Point(1, 1)
-    print("p2=", p2)
+    print("p2=", p2.toString())
     print("distance p1 p2", p1.dist(p2))
     p3 = Point()
-    print("p3=", p3)
+    print("p3=", p3.toString())
 
     # deplace
     p1.move(1, 1)
-    print("p1=", p1)
+    print("p1=", p1.toString())
     p2.move(1, 1)
-    print("p2=", p2)
+    print("p2=", p2.toString())
     print("distance p1 p2 apres deplacment", p1.dist(p2))
 
