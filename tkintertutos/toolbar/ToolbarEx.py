@@ -38,6 +38,15 @@ class App():
         quitBtn = Button(self.toolbar, image=self.useImg4, command=self.callback)
         quitBtn.pack(side=LEFT, fill=X)
 
+        Lb1 = Listbox(self.toolbar)
+        Lb1.insert(1, "Python")
+        Lb1.insert(2, "Perl")
+        Lb1.insert(3, "C")
+        Lb1.insert(4, "PHP")
+        Lb1.insert(5, "JSP")
+        Lb1.insert(6, "Ruby")
+        Lb1.pack(side=LEFT, fill=X)
+
         # Add the toolbar
         self.toolbar.pack(side=TOP, fill=X)
 
