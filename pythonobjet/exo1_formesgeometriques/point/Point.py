@@ -32,11 +32,11 @@ class Point:
 
 
     def __repr__(self):
-        s = f'x={self.__x} y={self.__y}'
+        s = f'Pointrepr(x={self.__x} y={self.__y})'
         return s
 
     def __str__(self):
-        s = f'abscisse={self.__x} ordonne={self.__y}'
+        s = f'Pointstr(x={self.__x} y={self.__y})'
         return s
 
     #def __sub__(self, autre):
