@@ -56,6 +56,8 @@ class App():
 
         infoLabel.setText("       Chargement en cours...")
 
+        infoLabel.setText("   TRUC...")
+
         # Set up a Text box and scroll bar.
         self.scrollbar = Scrollbar(self.root)
         self.scrollbar.pack(side=RIGHT, fill=Y)
@@ -72,6 +74,8 @@ class App():
 
     def callback(self):
         print ("A button was pressed")
+
+
 
 if __name__ == "__main__":
     print("==================== begin ======================")

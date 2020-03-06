@@ -30,8 +30,11 @@ class TestPile(unittest.TestCase):
         p = Pile(2)
         p.empiler(20)
         p.empiler(20)
-        with self.assertRaises(PileExceptionPleine) as context:
-            p.empiler(20)
+
+        self.assertRaises(PileExceptionPleine, p.empiler, 20)
+
+        #with self.assertRaises(PileExceptionPleine) as context:
+        #    p.empiler(20)
 
 
     def testExceptionPileVide(self):
@@ -42,9 +45,6 @@ class TestPile(unittest.TestCase):
 
         with self.assertRaises(PileExceptionVide) as context:
             p.depiler()
-
-
-
 
 if __name__ == '__main__':
     unittest.main()
