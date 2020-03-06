@@ -18,6 +18,8 @@ class Pile:
     def tailleMax (self, val):
         print("non modifiable")
 
+    def getTaille(self):
+        return len(self.__data)
 
     def empiler (self, obj):
         if len(self.__data) < self.__tailleMax:
