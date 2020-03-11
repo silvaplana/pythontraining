@@ -1,3 +1,4 @@
+import threading
 from time import sleep
 
 
@@ -42,6 +43,11 @@ class Model:
     def getSourceDest(self):
         return self.conf.sourceDest
 
+    def getMacsData(self):
+        return "dlddldlfkfk/macs/data"
+    def getSicsData(self):
+        return "dlddldlfkfk/sics/data"
+
     def getZipElements(self, withPath):
         zipElements =  [ "MacsConf_conf.zip" ]
         if not withPath:
@@ -53,9 +59,9 @@ class Model:
             return zipElements2
 
     def getSourceElements(self, withPath):
-        sourceElements =  [ "com.bull.mil.macs.conf.manager", "com.bull.mil.macs.confPims"  ]
+        sourceElements =  [ "com.bull.mil.macs.conf.manager.cfg", "com.bull.mil.macs.confPims.xml"  ]
         if not withPath:
-            return zipElements
+            return sourceElements
         else:
             sourceElements2 = []
             for e in sourceElements:

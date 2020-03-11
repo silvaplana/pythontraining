@@ -77,7 +77,7 @@ class App():
         self.text.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.text.yview)
 
-        self.controller.setWidgets(self.menuBar, self.infoLabel, self.fileSelector, self.fileMerger, self.text)
+        #self.controller.setWidgets(self.menuBar, self.infoLabel, self.fileSelector, self.fileMerger, self.text)
 
 
     def callback(self):
