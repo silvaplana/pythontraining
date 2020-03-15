@@ -34,6 +34,12 @@ class Model:
         self.modelEvent.onButtonUpdated(self.bValue)
     ##################################################
 
+    def getMacHierarchy(self):
+        return self.conf.macsHierarchy
+
+    def getSicsHierarchy(self):
+        return self.conf.sicsHierarchy
+
     def getMacsDest(self):
         return self.conf.macsDest
 
@@ -47,6 +53,15 @@ class Model:
         return "dlddldlfkfk/macs/data"
     def getSicsData(self):
         return "dlddldlfkfk/sics/data"
+
+    def getMacsLabel(self):
+        return "SEA"
+
+    def getMacsComPort(self):
+        return "COM3"
+
+    def  getMacsChannelsConf(self):
+        return "1,2"
 
     def getZipElements(self, withPath):
         zipElements =  [ "MacsConf_conf.zip" ]

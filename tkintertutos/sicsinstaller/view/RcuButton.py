@@ -9,7 +9,7 @@ class RcuButton(Button):
         self.controller = controller
 
     def onClick(self):
-        self.controller
+        pass
 
 
 

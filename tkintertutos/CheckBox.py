@@ -1,19 +1,26 @@
-from tkinter import Tk, IntVar, Checkbutton, Button, W
+from tkinter import *
 
+class TestMenu:
+        def __init__(self, master):
+            self.master = master
 
-def print_button_callback():
-    global state
-    for i in range(3):
-        if state[i][1].get():
-            print(state[i][0])
+            self.top = Toplevel(width=200, relief=RAISED, borderwidth=2)
+            self.menubar = Menubutton(self.top, text='Menubutton', relief=RAISED,
+                                      activebackground='#3399ff', bg='white', fg='black')
+            self.menubar.pack(side="top")
 
-myApp=Tk()
-state = [("Option {0}".format(i+1),IntVar()) for i in range(3)]
+            mb_radmenu = Menu(self.menubar)
+            self.menubar.configure(menu=mb_radmenu)
 
-for i in range(3):
-    Checkbutton(myApp, text=state[i][0], variable=state[i][1]).grid(row=i, sticky=W)
+            mb_radmenu.add_radiobutton(label='A')
+            mb_radmenu.add_radiobutton(label='B')
+            mb_radmenu.add_radiobutton(label='C')
 
-Button(myApp, text="Print", command=print_button_callback).grid(row=3, sticky=W)
+def main():
+    root = Tk()
+    root.withdraw()
+    app = TestMenu(root)
+    root.mainloop()
 
-
-myApp.mainloop()
+if __name__ == '__main__':
+    main()
