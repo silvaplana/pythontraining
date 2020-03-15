@@ -2,7 +2,7 @@ import threading
 from time import sleep
 
 
-class ReplaceFileThread(threading.Thread):
+class Model(threading.Thread):
     def __init__(self, model, element, duration):
         threading.Thread.__init__(self)
         self.model = model
@@ -18,23 +18,12 @@ class ReplaceFileThread(threading.Thread):
 
 class Model:
     def __init__(self, conf):
-        self.modelEvent = None
-        self.bValue = "x"
         self.conf = conf
 
     def registerModelEvent(self, modelEvent):
         self.modelEvent = modelEvent
 
-    #################################################
-    def getBValue(self):
-        return self.bValue
-
-    def incButtonValue(self):
-        self.bValue +="x"
-        self.modelEvent.onButtonUpdated(self.bValue)
-    ##################################################
-
-    def getMacHierarchy(self):
+    def getMacsHierarchy(self):
         return self.conf.macsHierarchy
 
     def getSicsHierarchy(self):

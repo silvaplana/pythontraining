@@ -9,8 +9,8 @@
 
 class Controller():
 
-    def __init__(self, model):
-        self.model = model
+    def __init__(self, modelResource):
+        self.model = modelResource
 
     def onClickOnButton(self):
         self.model.incButtonValue()

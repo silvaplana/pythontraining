@@ -10,10 +10,10 @@ from tkintertutos.toolbar.view.InfoLabel import InfoLabel
 
 
 class View(ModelEvent):
-    def __init__(self, window, controller, model):
+    def __init__(self, window, controller, modelResource):
         self.window = window
         self.controller = controller
-        self.model = model
+        self.model = modelResource
         ModelEvent.__init__(self)
         self.initMMI()
 
