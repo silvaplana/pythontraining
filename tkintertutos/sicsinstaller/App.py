@@ -1,31 +1,31 @@
-from tkinter import Tk, Label
+from tkinter import Tk
 
-from tkintertutos.sicsinstaller.model.Configuration import Configuration
-from tkintertutos.sicsinstaller.model.Model import Model
-from tkintertutos.sicsinstaller.model.modelResource.ModelResource import ModelResource
-from tkintertutos.sicsinstaller.view.View import View
-from tkintertutos.toolbar.controller.Controller import Controller
+from tkintertutos.sicsinstaller.client.controller.Controller import Controller
+from tkintertutos.sicsinstaller.server.model.Configuration import Configuration
+from tkintertutos.sicsinstaller.server.model.Model import Model
+from tkintertutos.sicsinstaller.server.resource.ModelResource import ModelResource
+from tkintertutos.sicsinstaller.client.view.View import View
 
 
 class App:
     def __init__(self):
 
+        ## Server ###########
         #model
         conf = Configuration()
         model = Model(conf)
-        modelResource = ModelResource(model)
+        aModelResource = ModelResource(model)
 
+        ## Client ###########
         #controller
-        controller = Controller(modelResource)
+        controller = Controller(aModelResource)
         # view
         fenetre = Tk()
-        view = View(fenetre, controller, modelResource)
+        view = View(fenetre, controller, aModelResource)
         model.registerModelEvent(view)
 
 
         fenetre.mainloop()
 
 if __name__ == '__main__':
-    print("a")
     app = App()
-    ("b")

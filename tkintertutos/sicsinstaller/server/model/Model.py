@@ -2,7 +2,7 @@ import threading
 from time import sleep
 
 
-class Model(threading.Thread):
+class ReplaceFileThread(threading.Thread):
     def __init__(self, model, element, duration):
         threading.Thread.__init__(self)
         self.model = model
@@ -19,15 +19,24 @@ class Model(threading.Thread):
 class Model:
     def __init__(self, conf):
         self.conf = conf
+        self.__loadConf()
 
     def registerModelEvent(self, modelEvent):
         self.modelEvent = modelEvent
 
     def getMacsHierarchy(self):
-        return self.conf.macsHierarchy
+        return self.macsHierarchy
+
+    def setMacsHierarchy(self, macsHierarchy):
+        self.macsHierarchy = macsHierarchy
+        self.modelEvent.onMacsHierarchyUpdated(self.macsHierarchy)
 
     def getSicsHierarchy(self):
-        return self.conf.sicsHierarchy
+        return self.sicsHierarchy
+
+    def setSicsHierarchy(self, sicsHierarchy):
+        self.sicsHierarchy = sicsHierarchy
+        self.modelEvent.onSicsHierarchyUpdated(self.sicsHierarchy)
 
     def getMacsDest(self):
         return self.conf.macsDest
@@ -36,7 +45,11 @@ class Model:
         return self.conf.sicsDest
 
     def getSourceDest(self):
-        return self.conf.sourceDest
+        return self.sourceDest
+
+    def setSourceDest(self, sourceDest):
+        self.sourceDest = sourceDest
+        self.modelEvent.onSourceDestUpdated(self.sourceDest)
 
     def getMacsData(self):
         return "dlddldlfkfk/macs/data"
@@ -77,3 +90,10 @@ class Model:
 
     def replaceFile(self, element):
         ReplaceFileThread(self, element, 4).start()
+
+    ## private methods
+
+    def __loadConf(self):
+        self.macsHierarchy = self.conf.macsHierarchy
+        self.sicsHierarchy = self.conf.sicsHierarchy
+        self.sourceDest = self.conf.sourceDest

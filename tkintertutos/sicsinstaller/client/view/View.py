@@ -1,11 +1,11 @@
 from tkinter import Label, StringVar, Button
 from tkinter.ttk import Entry
 
-from tkintertutos.sicsinstaller.model.ModelEvent import ModelEvent
-from tkintertutos.sicsinstaller.view.ChangeDirButton import ChangeDirButton
-from tkintertutos.sicsinstaller.view.ChannelsConfMenuButton import ChannelsConfMenuButton
-from tkintertutos.sicsinstaller.view.PortComMenuButton import PortComMenuButton
-from tkintertutos.sicsinstaller.view.RcuButton import RcuButton
+from tkintertutos.sicsinstaller.client.view.ChangeDirButton import ChangeDirButton
+from tkintertutos.sicsinstaller.client.view.ChannelsConfMenuButton import ChannelsConfMenuButton
+from tkintertutos.sicsinstaller.client.view.PortComMenuButton import PortComMenuButton
+from tkintertutos.sicsinstaller.client.view.RcuButton import RcuButton
+from tkintertutos.sicsinstaller.server.event.ModelEvent import ModelEvent
 from tkintertutos.toolbar.view.InfoLabel import InfoLabel
 
 
@@ -37,23 +37,23 @@ class View(ModelEvent):
         self.sourceDest = StringVar()
         self.sourceDest.set(self.model.getSourceDest())
         Label(self.window, textvariable=self.sourceDest, borderwidth=5).grid(row=currentLine, column=2)
-        ChangeDirButton(self.window, self.controller, "Change", self.sourceDest).grid(row=currentLine, column=3)
+        ChangeDirButton(self.window, self.controller, "Change", "#sourceDest").grid(row=currentLine, column=3)
 
-        # Ligne 3 : macs
+        # Ligne 3 : macs Hierarchy
         currentLine += 1
         Label(self.window, text='Macs hierarchy:', borderwidth=5).grid(row=currentLine, column=1)
-        self.macsDest = StringVar()
-        self.macsDest.set(self.model.getMacsDest())
-        Label(self.window, textvariable=self.macsDest, borderwidth=5).grid(row=currentLine, column=2)
-        ChangeDirButton(self.window, self.controller, "Change", self.macsDest).grid(row=currentLine, column=3)
+        self.macsHierarchy = StringVar()
+        self.macsHierarchy.set(self.model.getMacsHierarchy())
+        Label(self.window, textvariable=self.macsHierarchy, borderwidth=5).grid(row=currentLine, column=2)
+        ChangeDirButton(self.window, self.controller, "Change", "#macsHierarchy").grid(row=currentLine, column=3)
 
         # Ligne 4 : sics
         currentLine += 1
         Label(self.window, text='Sics hierarchy:', borderwidth=5).grid(row=currentLine, column=1)
-        self.sicsDest = StringVar()
-        self.sicsDest.set(self.model.getSicsDest())
-        Label(self.window, textvariable=self.sicsDest, borderwidth=5).grid(row=currentLine, column=2)
-        ChangeDirButton(self.window, self.controller, "Change", self.sicsDest).grid(row=currentLine, column=3)
+        self.sicsHierarchy = StringVar()
+        self.sicsHierarchy.set(self.model.getSicsHierarchy())
+        Label(self.window, textvariable=self.sicsHierarchy, borderwidth=5).grid(row=currentLine, column=2)
+        ChangeDirButton(self.window, self.controller, "Change", "#sicsHierarchy").grid(row=currentLine, column=3)
 
         # Ligne 5 : vide
         currentLine += 1
@@ -62,12 +62,12 @@ class View(ModelEvent):
 
         # Ligne 6 : remove macs data
         currentLine += 1
-        RcuButton(self.window, self.controller, "Remove macs directory", "REMOVE", "macsDir").grid(row=currentLine,column=1)
-        RcuButton(self.window, self.controller,"Remove macs data directory", "REMOVE", "macsDataDir").grid(row=currentLine, column=2)
+        RcuButton(self.window, self.controller, "Remove macs directory", "REMOVE", "macsDir").grid(row=currentLine, column=1)
+        RcuButton(self.window, self.controller, "Remove macs data directory", "REMOVE", "macsDataDir").grid(row=currentLine, column=2)
 
         # Ligne 7 : remove sics data
         currentLine += 1
-        RcuButton(self.window,self.controller, "Remove sics  directory", "REMOVE", "sicsDir").grid(row=currentLine, column=1)
+        RcuButton(self.window, self.controller, "Remove sics  directory", "REMOVE", "sicsDir").grid(row=currentLine, column=1)
         RcuButton(self.window, self.controller, "Remove sics data directory", "REMOVE", "sicsDataDir").grid(row=currentLine, column=2)
 
         # Ligne 7 prime : vide
@@ -87,7 +87,7 @@ class View(ModelEvent):
         sourceElts = self.model.getSourceElements(False)
         for el in range(len(sourceElts)):
             currentLine += 1
-            RcuButton(self.window, self.controller, f"Remove remote {sourceElts[el]}", "REMOVE", sourceElts[el] ).grid(row=currentLine, column=1)
+            RcuButton(self.window, self.controller, f"Remove remote {sourceElts[el]}", "REMOVE", sourceElts[el]).grid(row=currentLine, column=1)
             RcuButton(self.window, self.controller, f"Copy {sourceElts[el]}", "COPY", sourceElts[el]).grid(row=currentLine, column=2)
 
         # Ligne k : vide
@@ -139,21 +139,23 @@ class View(ModelEvent):
 
 
 
-    # MMI actions
+    # ModelEvent implementations
 
-    def onButtonClick(self):
-        self.controller.onClickOnButton()
 
-    # MMI actions end (on click)
+    def onMacsHierarchyUpdated(self, value):
+        self.macsHierarchy.set(value)
 
-    # model event implementations
-    def onButtonUpdated(self, value):
-        self.bValue.set(value)
-        print("onButtonUpdated value", value)
+    def onSicsHierarchyUpdated(self, value):
+        self.sicsHierarchy.set(value)
+
+    def onSourceDestUpdated(self, value):
+        self.sourceDest.set(value)
+
+
 
     def onInfoLabelUpdate(self, value):
         pass
 
 
 
-    # end of model event implementations
+    # end of ModelEvent implementations

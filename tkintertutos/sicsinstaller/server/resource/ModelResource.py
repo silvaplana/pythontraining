@@ -5,11 +5,17 @@ class ModelResource:
     def registerModelEvent(self, modelEvent):
         self.__m.registerModelEvent(modelEvent)
 
+    def setMacsHierarchy(self, macsHierarchy):
+        self.__m.setMacsHierarchy(macsHierarchy)
+
     def getMacsHierarchy(self):
         return self.__m.getMacsHierarchy()
 
     def getSicsHierarchy(self):
         return self.__m.getSicsHierarchy()
+
+    def setSicsHierarchy(self, sicsHierarchy):
+        self.__m.setSicsHierarchy(sicsHierarchy)
 
     def getMacsDest(self):
         return self.__m.getMacsDest()
@@ -19,6 +25,9 @@ class ModelResource:
 
     def getSourceDest(self):
         return self.__m.getSourceDest()
+
+    def setSourceDest(self, sourceDest):
+        self.__m.setSourceDest(sourceDest)
 
     def getMacsData(self):
         return self.__m.getMacsData()
