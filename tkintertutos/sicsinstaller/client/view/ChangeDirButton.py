@@ -14,7 +14,7 @@ class ChangeDirButton(Button):
 
     def onClick(self):
         newDirectory = filedialog.askdirectory()
-        self.controller.onNewDirectoryClick(self.element, newDirectory)
+        self.controller.onNewValueSelection(self.element, newDirectory)
 
 
 

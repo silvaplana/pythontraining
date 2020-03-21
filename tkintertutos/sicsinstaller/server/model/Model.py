@@ -1,6 +1,8 @@
 import threading
 from time import sleep
 
+from pythontraining.tkintertutos.sicsinstaller.server.model.Persistence import Persistence
+
 
 class ReplaceFileThread(threading.Thread):
     def __init__(self, model, element, duration):
@@ -19,51 +21,31 @@ class ReplaceFileThread(threading.Thread):
 class Model:
     def __init__(self, conf):
         self.conf = conf
+        self.persistence = Persistence(self)
+        # vals are stored in persistence
+        # keys are : macsHierarchy, sicsHierarchy, sourceDir, macsLabel, macsComPort, MacsChannelsConf
+        self.vals = {}
+
         self.__loadConf()
+
+
 
     def registerModelEvent(self, modelEvent):
         self.modelEvent = modelEvent
 
-    def getMacsHierarchy(self):
-        return self.macsHierarchy
+    def getValue(self, key):
+            if key in self.vals.keys():
+                return self.vals[key]
+            else:
+                return f"not found {key}"
 
-    def setMacsHierarchy(self, macsHierarchy):
-        self.macsHierarchy = macsHierarchy
-        self.modelEvent.onMacsHierarchyUpdated(self.macsHierarchy)
-
-    def getSicsHierarchy(self):
-        return self.sicsHierarchy
-
-    def setSicsHierarchy(self, sicsHierarchy):
-        self.sicsHierarchy = sicsHierarchy
-        self.modelEvent.onSicsHierarchyUpdated(self.sicsHierarchy)
-
-    def getMacsDest(self):
-        return self.conf.macsDest
-
-    def getSicsDest(self):
-        return self.conf.sicsDest
-
-    def getSourceDest(self):
-        return self.sourceDest
-
-    def setSourceDest(self, sourceDest):
-        self.sourceDest = sourceDest
-        self.modelEvent.onSourceDestUpdated(self.sourceDest)
-
-    def getMacsData(self):
-        return "dlddldlfkfk/macs/data"
-    def getSicsData(self):
-        return "dlddldlfkfk/sics/data"
-
-    def getMacsLabel(self):
-        return "SEA"
-
-    def getMacsComPort(self):
-        return "COM3"
-
-    def  getMacsChannelsConf(self):
-        return "1,2"
+    def setValue(self, key, value):
+            if key in self.vals.keys():
+                self.vals[key] = value
+                self.persistence.saveAll()
+                self.modelEvent.onValueUpdated(key, value)
+            else:
+                return  print ("not found", key, ": impossible to set value")
 
     def getZipElements(self, withPath):
         zipElements =  [ "MacsConf_conf.zip" ]
@@ -85,15 +67,40 @@ class Model:
                 sourceElements2.append(f"{self.getSourceDest()}\\{e}")
             return sourceElements2
 
-    def getPathInDest(self, element):
-        return f"ZE PATH IN DEST IS {element}"
+    def onMacsLabelApply(self):
+        pass
 
-    def replaceFile(self, element):
-        ReplaceFileThread(self, element, 4).start()
+    def onMacsComPortApply(self):
+        pass
+
+    def onMacsChannelsConfApply(self):
+        pass
+
+    # get path in macs hierarchy (option="macs")  or sics hierarchy  (option="sics") or both hierarchy (option="all")
+    # hintSearch : "macs" , "sics", or "all"
+    # element : a directory or a file name , can be preceeded by path.  There are special words : #macs , #sics , the root for macs and sics directories : below is data, below is...
+    def getPath(self, element, hintSearch="all"):
+        if element == "#macs":
+            return None
+        elif element == "#sics":
+            return "the sics dir"
+        elif element == "#macs/data":
+            return "the macs data dir"
+        elif element == "#sics/data":
+            return None
+        else:
+            return None
 
     ## private methods
 
     def __loadConf(self):
-        self.macsHierarchy = self.conf.macsHierarchy
-        self.sicsHierarchy = self.conf.sicsHierarchy
-        self.sourceDest = self.conf.sourceDest
+        self.vals = self.persistence.loadAll()
+
+    def __replaceFile(self, element):
+        ReplaceFileThread(self, element, 4).start()
+
+    def __getMacsDir(self):
+        return None
+
+    def __getSicsDir(self):
+        return None

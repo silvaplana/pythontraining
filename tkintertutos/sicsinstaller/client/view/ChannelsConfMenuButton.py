@@ -21,12 +21,18 @@ class ChannelsConfMenuButton(Menubutton):
     def __conf01(self):
         self.configure(text='0,1')
         self.choice = '0,1'
+        self.onSelection('0,1')
 
     def __conf34(self):
         self.configure(text='3,4')
         self.choice = '3,4'
+        self.onSelection('3,4')
 
     def __conf56(self):
         self.configure(text='5,6')
         self.choice = '5,6'
+        self.onSelection('5,6')
+
+    def onSelection (self, value):
+        self.controller.onNewValueSelection("macsChannelsConf", value)
 

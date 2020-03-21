@@ -8,8 +8,6 @@ class PortComMenuButton(Menubutton):
         self.controller = controller
         Menubutton.__init__(self, window, text=defaultValue, relief=RAISED)
 
-        self.choice = defaultValue
-
         self.mb_radmenu = Menu(self, tearoff=0)
         self.configure(menu=self.mb_radmenu)
         self.mb_radmenu.add_command(label='PIMS', underline=0, command=self.__comPims)
@@ -21,35 +19,38 @@ class PortComMenuButton(Menubutton):
         self.mb_radmenu.add_command(label='COM6', underline=0, command=self.__com6)
 
 
-    def getChoice(self):
-        return self.choice
-
     def __comPims(self):
         self.configure(text='PIMS')
-        self.choice = 'PIMS'
+        self.onSelection('PIMS')
+
     def __com1(self):
         self.configure(text='COM1')
-        self.choice = 'COM1'
+        self.onSelection('COM1')
 
     def __com2(self):
         self.configure(text='COM2')
-        self.choice = 'COM2'
+        self.onSelection('COM2')
 
     def __com3(self):
         self.configure(text='COM3')
-        self.choice = 'COM3'
+        self.onSelection('COM3')
 
     def __com4(self):
         self.configure(text='COM4')
-        self.choice = 'COM4'
+        self.onSelection('COM4')
 
     def __com5(self):
         self.configure(text='COM5')
-        self.choice = 'COM5'
+        self.onSelection('COM5')
 
     def __com6(self):
         self.configure(text='COM6')
-        self.choice = 'COM6'
+        self.onSelection('COM6')
+
+    def onSelection (self, value):
+        self.controller.onNewValueSelection("macsComPort", value)
+
+
 
 
 

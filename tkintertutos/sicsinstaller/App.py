@@ -1,10 +1,11 @@
 from tkinter import Tk
 
-from tkintertutos.sicsinstaller.client.controller.Controller import Controller
-from tkintertutos.sicsinstaller.server.model.Configuration import Configuration
-from tkintertutos.sicsinstaller.server.model.Model import Model
-from tkintertutos.sicsinstaller.server.resource.ModelResource import ModelResource
-from tkintertutos.sicsinstaller.client.view.View import View
+from pythontraining.tkintertutos.sicsinstaller.client.controller.Controller import Controller
+from pythontraining.tkintertutos.sicsinstaller.client.view.View import View
+from pythontraining.tkintertutos.sicsinstaller.server.model.Configuration import Configuration
+from pythontraining.tkintertutos.sicsinstaller.server.model.Model import Model
+from pythontraining.tkintertutos.sicsinstaller.server.resource.ModelResource import ModelResource
+
 
 
 class App:

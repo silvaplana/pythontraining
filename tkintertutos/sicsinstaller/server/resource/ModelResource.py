@@ -5,44 +5,23 @@ class ModelResource:
     def registerModelEvent(self, modelEvent):
         self.__m.registerModelEvent(modelEvent)
 
-    def setMacsHierarchy(self, macsHierarchy):
-        self.__m.setMacsHierarchy(macsHierarchy)
+    def getValue(self, key):
+        return self.__m.getValue(key)
 
-    def getMacsHierarchy(self):
-        return self.__m.getMacsHierarchy()
+    def setValue(self, key, value):
+        self.__m.setValue(key, value)
 
-    def getSicsHierarchy(self):
-        return self.__m.getSicsHierarchy()
+    def getPath(self, element, hintSearch="all"):
+        return self.__m.getPath(element, hintSearch)
 
-    def setSicsHierarchy(self, sicsHierarchy):
-        self.__m.setSicsHierarchy(sicsHierarchy)
+    def onMacsLabelApply(self):
+        self.__m.onMacsLabelApply()
 
-    def getMacsDest(self):
-        return self.__m.getMacsDest()
+    def onMacsComPortApply(self):
+        self.__m.onMacsLabelApply()
 
-    def getSicsDest(self):
-        return self.__m.getSicsDest()
-
-    def getSourceDest(self):
-        return self.__m.getSourceDest()
-
-    def setSourceDest(self, sourceDest):
-        self.__m.setSourceDest(sourceDest)
-
-    def getMacsData(self):
-        return self.__m.getMacsData()
-
-    def getSicsData(self):
-        return self.__m.getSicsData()
-
-    def getMacsLabel(self):
-        return self.__m.getMacsLabel()
-
-    def getMacsComPort(self):
-        return self.__m.getMacsComPort()
-
-    def getMacsChannelsConf(self):
-        return self.__m.getMacsChannelsConf()
+    def onMacsChannelsConfApply(self):
+        self.__m.onMacsChannelsConfApply()
 
     def getZipElements(self, withPath):
         return self.__m.getZipElements(withPath)
@@ -50,9 +29,3 @@ class ModelResource:
     def getSourceElements(self, withPath):
         return self.__m.getSourceElements(withPath)
 
-    def getPathInDest(self, element):
-        return self.__m.getPathInDest(element)
-
-    def replaceFile(self, element):
-        print("entry in replaceFile, element=", element)
-        self.__m.replaceFile(element)
