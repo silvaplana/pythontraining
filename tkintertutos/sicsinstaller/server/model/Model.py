@@ -1,3 +1,4 @@
+import os
 import threading
 from time import sleep
 
@@ -25,10 +26,7 @@ class Model:
         # vals are stored in persistence
         # keys are : macsHierarchy, sicsHierarchy, sourceDir, macsLabel, macsComPort, MacsChannelsConf
         self.vals = {}
-
         self.__loadConf()
-
-
 
     def registerModelEvent(self, modelEvent):
         self.modelEvent = modelEvent
@@ -80,27 +78,73 @@ class Model:
     # hintSearch : "macs" , "sics", or "all"
     # element : a directory or a file name , can be preceeded by path.  There are special words : #macs , #sics , the root for macs and sics directories : below is data, below is...
     def getPath(self, element, hintSearch="all"):
-        if element == "#macs":
-            return None
-        elif element == "#sics":
-            return "the sics dir"
-        elif element == "#macs/data":
-            return "the macs data dir"
-        elif element == "#sics/data":
-            return None
-        else:
-            return None
+
+        strElement = element
+
+        # replace #macs  and #sics by their path
+        if "#macs" in strElement:
+            if not self.__getMacsDir() == None:
+                strElement = strElement.replace("#macs", self.__getMacsDir())
+            else:
+                return None
+
+        if "#sics" in strElement:
+            if not self.__getSicsDir() == None:
+                strElement = strElement.replace("#sics", self.__getSicsDir())
+            else:
+                return None
+
+        strTmp = ""
+        pathFound = None
+
+        if (hintSearch == "macs" or hintSearch == "all") and "macsHierarchy" in  self.vals:
+            pathFound = self.__getPathThatEndsWith(self.vals["macsHierarchy"], strElement)
+            if pathFound != None:
+                return pathFound
+
+        if (hintSearch == "sics" or hintSearch == "all") and "sicsHierarchy" in  self.vals:
+            pathFound = self.__getPathThatEndsWith(self.vals["sicsHierarchy"], strElement)
+            if pathFound != None:
+                return pathFound
+
+        return None
+
 
     ## private methods
 
     def __loadConf(self):
         self.vals = self.persistence.loadAll()
 
-    def __replaceFile(self, element):
-        ReplaceFileThread(self, element, 4).start()
+    #def __replaceFile(self, element):
+    #    ReplaceFileThread(self, element, 4).start()
 
     def __getMacsDir(self):
-        return None
+        pattern = "/bin/macs-sics-server-runtime.cmd"
+
+        pathFound = self.__getPathThatEndsWith (self.vals["macsHierarchy"], pattern)
+        if pathFound == None:
+            return None
+        pathFound = pathFound.replace(pattern, "")
+        return pathFound
 
     def __getSicsDir(self):
+        pattern = "/factory/fr.dga.sics.profile.cfg"
+        pathFound = self.__getPathThatEndsWith(self.vals["sicsHierarchy"], pattern)
+        if pathFound == None:
+            return None
+        pathFound = pathFound.replace(pattern, "")
+        return pathFound
+
+    def __getPathThatEndsWith (self, startPath, endsWithStr):
+        for root, dirs, files in os.walk(startPath):
+            for name in files:
+                strTmp = os.path.join(root, name)
+                strTmp = strTmp.replace("\\", "/")
+                if strTmp.endswith(endsWithStr):
+                    return strTmp
+            for name in dirs:
+                strTmp = os.path.join(root, name)
+                strTmp =  strTmp.replace("\\", "/")
+                if strTmp.endswith(endsWithStr):
+                    return strTmp
         return None
