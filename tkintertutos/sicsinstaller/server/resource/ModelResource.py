@@ -14,6 +14,9 @@ class ModelResource:
     def getPath(self, element, hintSearch="all"):
         return self.__m.getPath(element, hintSearch)
 
+    def removeFileOrDir(self, path):
+        return self.__m.removeFileOrDir(path)
+
     def onMacsLabelApply(self):
         self.__m.onMacsLabelApply()
 

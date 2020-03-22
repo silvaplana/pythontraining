@@ -3,6 +3,7 @@ import threading
 from time import sleep
 
 from pythontraining.tkintertutos.sicsinstaller.server.model.Persistence import Persistence
+from pythontraining.tkintertutos.utilities.FileOp import FileOp
 
 
 class ReplaceFileThread(threading.Thread):
@@ -21,6 +22,7 @@ class ReplaceFileThread(threading.Thread):
 
 class Model:
     def __init__(self, conf):
+        self.fileOp = FileOp()
         self.conf = conf
         self.persistence = Persistence(self)
         # vals are stored in persistence
@@ -106,8 +108,11 @@ class Model:
             pathFound = self.__getPathThatEndsWith(self.vals["sicsHierarchy"], strElement)
             if pathFound != None:
                 return pathFound
-
         return None
+
+    def removeFileOrDir(self, path):
+        self.fileOp.removeFileOrDir(path)
+        self.modelEvent.onInfoLabelUpdate(f"element {path} removed")
 
 
     ## private methods

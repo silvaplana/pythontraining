@@ -18,18 +18,14 @@ class Controller():
     def getPath(self, element, hintSearch="all"):
         return self.model.getPath(element, hintSearch)
 
-    def onRcuButtonClick(self, operation, element):
-        print ("controller on ", operation, element)
+    def removeFileOrDir(self, path):
+        self.model.removeFileOrDir(path)
 
-    # change button clicked
+    # change buttons clicked
     def onMacsLabelApply(self):
         self.model.onMacsLabelApply()
-
-    # change button clicked
     def onMacsComPortApply(self):
         self.model.onMacsComPortApply()
-
-    # change button clicked
     def onMacsChannelsConfApply(self):
         self.model.onMacsChannelsConfApply()
 

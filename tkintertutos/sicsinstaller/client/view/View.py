@@ -24,7 +24,8 @@ class View(ModelEvent):
 
         #Ligne 1 : info label
         currentLine+=1
-        InfoLabel(self.window, "", self.controller).grid(row=currentLine, column=2)
+        self.infoLabel = InfoLabel(self.window, "", self.controller)
+        self.infoLabel.grid(row=currentLine, column=2)
 
         # Ligne 1 prime : vide
         currentLine += 1
@@ -36,7 +37,6 @@ class View(ModelEvent):
         Label(self.window, text='Source directory:', borderwidth=5).grid(row=currentLine, column=1)
         self.sourceDir = StringVar()
         self.sourceDir.set(self.model.getValue("sourceDir"))
-        print ("eee", self.model.getValue("sourceDir"))
         Label(self.window, textvariable=self.sourceDir, borderwidth=5).grid(row=currentLine, column=2)
         ChangeDirButton(self.window, self.controller, "Change", "sourceDir").grid(row=currentLine, column=3)
 
@@ -170,7 +170,8 @@ class View(ModelEvent):
         #    self.channelsConfMenuButton.configure(text=value)
 
     def onInfoLabelUpdate(self, value):
-        pass
+        print ("value is", value)
+        self.infoLabel.setTexte(value)
 
 
 
