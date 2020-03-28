@@ -47,34 +47,70 @@ class Model:
             else:
                 return  print ("not found", key, ": impossible to set value")
 
+
     def getZipElements(self, withPath):
-        zipElements =  [ "MacsConf_conf.zip" ]
-        if not withPath:
-            return zipElements
+        zipElements = []
+        sourceDir = self.vals["sourceDir"]
+        if sourceDir == None:
+            return []
         else:
-            zipElements2 = []
-            for e in zipElements:
-                zipElements2.append(f"{self.getSourceDest()}\\{e}")
-            return zipElements2
+            for file in os.listdir(sourceDir):
+                if file.endswith(".zip"):
+                    zipElements.append(file)
+
+            if not withPath:
+                return zipElements
+            else:
+                zipElements2 = []
+                for e in zipElements:
+                    zipElements2.append(f"{self.getSourceDest()}\\{e}")
+                return zipElements2
 
     def getSourceElements(self, withPath):
-        sourceElements =  [ "com.bull.mil.macs.conf.manager.cfg", "com.bull.mil.macs.confPims.xml"  ]
-        if not withPath:
-            return sourceElements
+        sourceElements = []
+        sourceDir = self.vals["sourceDir"]
+        if sourceDir == None:
+            return []
         else:
-            sourceElements2 = []
-            for e in sourceElements:
-                sourceElements2.append(f"{self.getSourceDest()}\\{e}")
-            return sourceElements2
+            for root, dirs, files in os.walk(sourceDir):
+                for name in files:
+                    if not name.endswith(".zip") and self.getPath(name)!=None:
+                        if not withPath:
+                            sourceElements.append(name)
+                        else:
+                            sourceElements.append(os.path.join(root, name))
+                            sourceElements[-1] = sourceElements[-1].replace("\\", "/")
+            return sourceElements
 
     def onMacsLabelApply(self):
-        pass
+        path = self.getPath( "fr.dga.sics.profile.cfg", "sics")
+        if path == None:
+            print("Cannot apply onMacsLabelApply, path fr.dga.sics.profile.cfg cannot be found")
+            return
+        self.fileOp.replaceBeaconValueInFile(path, "participantId", self.getValue("macsLabel"))
 
     def onMacsComPortApply(self):
-        pass
+        path = self.getPath("com.bull.mil.macs.conf.xml", "macs")
+        if path == None:
+            print("Cannot apply onMacsLabelApply, path com.bull.mil.macs.conf.xml cannot be found")
+            return
+        selectedMacsPort = self.getValue("macsComPort")
+        if selectedMacsPort == 'PIMS':
+            newMacsPort =  "\"tcp://localhost/COM240\""
+        else:
+            newMacsPort = f"\"serial://{selectedMacsPort}\""
+        self.fileOp.replaceBeaconValueInFile(path, "uri", newMacsPort)
 
     def onMacsChannelsConfApply(self):
-        pass
+        path = self.getPath("com.bull.mil.macs.conf.xml", "macs")
+        if path == None:
+            print("Cannot apply onMacsLabelApply, path com.bull.mil.macs.conf.xml cannot be found")
+            return
+        values = self.getValue("macsChannelsConf").split(",")
+        publicChannel=f"\"{values[0]}\""
+        privateChannel = f"\"{values[1]}\""
+        self.fileOp.replaceBeaconValueInFile(path, "public-channel", publicChannel)
+        self.fileOp.replaceBeaconValueInFile(path, "private-channel", privateChannel)
 
     # get path in macs hierarchy (option="macs")  or sics hierarchy  (option="sics") or both hierarchy (option="all")
     # hintSearch : "macs" , "sics", or "all"
@@ -111,9 +147,33 @@ class Model:
         return None
 
     def removeFileOrDir(self, path):
-        self.fileOp.removeFileOrDir(path)
-        self.modelEvent.onInfoLabelUpdate(f"element {path} removed")
+        if path != None and os.path.exists(path):
+            self.modelEvent.onInfoLabelUpdate(f"Deleting element {path}...")
+            self.fileOp.removeFileOrDir(path)
+            self.modelEvent.onFileOrDirUpdated(f"{path} deleted", "deleted" )
+        else:
+            self.modelEvent.onInfoLabelUpdate(f"{path} cannot be copied ")
 
+
+
+    def copyFileOrDir(self, srcPath, destDirPath):
+        if srcPath!=None and os.path.exists(srcPath) and destDirPath!=None and os.path.exists(destDirPath):
+            self.modelEvent.onInfoLabelUpdate(f"Copying element {srcPath} to {destDirPath} ...")
+            self.fileOp.copyFileOrDir(srcPath, destDirPath)
+            self.modelEvent.onFileOrDirUpdated(f"{srcPath} copied","copied")
+        else:
+            self.modelEvent.onInfoLabelUpdate(f"{srcPath} cannot be copied ")
+
+    def unzipFile(self, srcFilePath, destDirPath):
+        if srcFilePath != None and os.path.exists(srcFilePath) and destDirPath != None and os.path.exists(destDirPath):
+            self.modelEvent.onInfoLabelUpdate(f"Unzipping element {srcFilePath} to {destDirPath} ...")
+            self.fileOp.unzipFile(srcFilePath, destDirPath)
+            self.modelEvent.onFileOrDirUpdated(f"{srcFilePath} unzipped","unzipped")
+        else:
+            self.modelEvent.onInfoLabelUpdate(f"{srcFilePath} cannot be unzipped")
+
+    def doesPathExist(self, path ):
+        return self.fileOp.doesPathExist( path)
 
     ## private methods
 

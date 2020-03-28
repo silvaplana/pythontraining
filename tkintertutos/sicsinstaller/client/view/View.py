@@ -1,22 +1,47 @@
+from threading import Thread, Event
 from tkinter import Label, StringVar, Button
 from tkinter.ttk import Entry
 
 from pythontraining.tkintertutos.sicsinstaller.client.view.ChangeDirButton import ChangeDirButton
 from pythontraining.tkintertutos.sicsinstaller.client.view.ChannelsConfMenuButton import ChannelsConfMenuButton
+from pythontraining.tkintertutos.sicsinstaller.client.view.InfoLabel import InfoLabel
 from pythontraining.tkintertutos.sicsinstaller.client.view.PortComMenuButton import PortComMenuButton
 from pythontraining.tkintertutos.sicsinstaller.client.view.RcuButton import RcuButton
+from pythontraining.tkintertutos.sicsinstaller.client.view.TextReplacerButton import TextReplacerButton
 from pythontraining.tkintertutos.sicsinstaller.server.event.ModelEvent import ModelEvent
-from pythontraining.tkintertutos.toolbar.view.InfoLabel import InfoLabel
+
+
+# refresh mmi every 5 seconds
+class RefreshMMiThread(Thread):
+    def __init__(self, stopEvent, view):
+        Thread.__init__(self)
+        self.stopped = stopEvent
+        self.view = view
+
+    def run(self):
+        while not self.stopped.wait(5):
+            print("Refresh MMI")
+            self.view.refreshMMI()
+
+
+
 
 
 class View(ModelEvent):
-    def __init__(self, window, controller, modelResource):
+    def __init__(self, window, controller):
         self.window = window
         self.controller = controller
-        self.model = modelResource
         ModelEvent.__init__(self)
         self.rcuButons = []
+        self.textReplacerButons = []
         self.initMMI()
+
+        #start thread that refresh periodically mmi
+        self.stopFlag = Event()
+        self.refreshMMiThread = RefreshMMiThread(self.stopFlag, self)
+        self.refreshMMiThread.start()
+        # this will stop the timer : self.stopFlag.set()
+
 
     def initMMI(self):
 
@@ -36,7 +61,7 @@ class View(ModelEvent):
         currentLine += 1
         Label(self.window, text='Source directory:', borderwidth=5).grid(row=currentLine, column=1)
         self.sourceDir = StringVar()
-        self.sourceDir.set(self.model.getValue("sourceDir"))
+        self.sourceDir.set(self.controller.getValue("sourceDir"))
         Label(self.window, textvariable=self.sourceDir, borderwidth=5).grid(row=currentLine, column=2)
         ChangeDirButton(self.window, self.controller, "Change", "sourceDir").grid(row=currentLine, column=3)
 
@@ -44,7 +69,7 @@ class View(ModelEvent):
         currentLine += 1
         Label(self.window, text='Macs hierarchy:', borderwidth=5).grid(row=currentLine, column=1)
         self.macsHierarchy = StringVar()
-        self.macsHierarchy.set(self.model.getValue("macsHierarchy"))
+        self.macsHierarchy.set(self.controller.getValue("macsHierarchy"))
         Label(self.window, textvariable=self.macsHierarchy, borderwidth=5).grid(row=currentLine, column=2)
         ChangeDirButton(self.window, self.controller, "Change", "macsHierarchy").grid(row=currentLine, column=3)
 
@@ -52,7 +77,7 @@ class View(ModelEvent):
         currentLine += 1
         Label(self.window, text='Sics hierarchy:', borderwidth=5).grid(row=currentLine, column=1)
         self.sicsHierarchy = StringVar()
-        self.sicsHierarchy.set(self.model.getValue("sicsHierarchy"))
+        self.sicsHierarchy.set(self.controller.getValue("sicsHierarchy"))
         Label(self.window, textvariable=self.sicsHierarchy, borderwidth=5).grid(row=currentLine, column=2)
         ChangeDirButton(self.window, self.controller, "Change", "sicsHierarchy").grid(row=currentLine, column=3)
 
@@ -63,14 +88,17 @@ class View(ModelEvent):
 
         # Ligne 6 : remove macs data
         currentLine += 1
-        thebt = RcuButton(self.window, self.controller, "Remove macs directory", "REMOVE", "macs", "#macs").grid(row=currentLine, column=1)
-        self.rcuButons.append(thebt)
-        self.rcuButons.append(RcuButton(self.window, self.controller, "Remove macs data directory", "REMOVE", "macs", "#macs/data").grid(row=currentLine, column=2))
+        self.rcuButons.append(RcuButton(self.window, self.controller, "Remove macs directory", "REMOVE", "macs", "#macs"))
+        self.rcuButons[-1].grid(row=currentLine, column=1)
+        self.rcuButons.append(RcuButton(self.window, self.controller, "Remove macs data directory", "REMOVE", "macs", "#macs/data"))
+        self.rcuButons[-1].grid(row=currentLine, column=2)
 
         # Ligne 7 : remove sics data
         currentLine += 1
-        self.rcuButons.append(RcuButton(self.window, self.controller, "Remove sics  directory", "REMOVE", "sics", "#sics").grid(row=currentLine, column=1))
-        self.rcuButons.append(RcuButton(self.window, self.controller, "Remove sics data directory", "REMOVE", "sics", "#sics/data").grid(row=currentLine, column=2))
+        self.rcuButons.append(RcuButton(self.window, self.controller, "Remove sics  directory", "REMOVE", "sics", "#sics"))
+        self.rcuButons[-1].grid(row=currentLine, column=1)
+        self.rcuButons.append(RcuButton(self.window, self.controller, "Remove sics data directory", "REMOVE", "sics", "#sics/data"))
+        self.rcuButons[-1].grid(row=currentLine, column=2)
 
         # Ligne 7 prime : vide
         currentLine += 1
@@ -78,45 +106,53 @@ class View(ModelEvent):
             row=currentLine, column=2)
 
         # Ligne i : elements a dezipper
-        sourceZipElts = self.model.getZipElements(False)
+        sourceZipElts = self.controller.getZipElements(False)
         for el in range(len(sourceZipElts)):
             currentLine += 1
-            self.rcuButons.append(RcuButton(self.window, self.controller, f"Remove remote {sourceZipElts[el]}", "REMOVE", "all", sourceZipElts[el]).grid(row=currentLine, column=1))
-            self.rcuButons.append(RcuButton(self.window, self.controller, f"Copy {sourceZipElts[el]}", "COPY", "all", sourceZipElts[el]).grid(row=currentLine, column=2))
-            self.rcuButons.append(RcuButton(self.window, self.controller, f"Unzip remote", "UNZIP", "all", sourceZipElts[el]).grid(row=currentLine, column=3))
+            self.rcuButons.append(RcuButton(self.window, self.controller, f"Remove remote {sourceZipElts[el]}", "REMOVE", "all", sourceZipElts[el]))
+            self.rcuButons[-1].grid(row=currentLine, column=1)
+            self.rcuButons.append(RcuButton(self.window, self.controller, f"Copy {sourceZipElts[el]}", "COPY", "all", sourceZipElts[el]))
+            self.rcuButons[-1].grid(row=currentLine, column=2)
+            self.rcuButons.append(RcuButton(self.window, self.controller, f"Unzip remote", "UNZIP", "all", sourceZipElts[el]))
+            self.rcuButons[-1].grid(row=currentLine, column=3)
 
         # Ligne j : elements a copier
-        sourceElts = self.model.getSourceElements(False)
+        sourceElts = self.controller.getSourceElements(False)
         for el in range(len(sourceElts)):
             currentLine += 1
-            self.rcuButons.append(RcuButton(self.window, self.controller, f"Remove remote {sourceElts[el]}", "REMOVE", "all", sourceElts[el]).grid(row=currentLine, column=1))
-            self.rcuButons.append(RcuButton(self.window, self.controller, f"Copy {sourceElts[el]}", "COPY", "all", sourceElts[el]).grid(row=currentLine, column=2))
+            self.rcuButons.append(RcuButton(self.window, self.controller, f"Remove remote {sourceElts[el]}", "REMOVE", "all", sourceElts[el]))
+            self.rcuButons[-1].grid(row=currentLine, column=1)
+            self.rcuButons.append(RcuButton(self.window, self.controller, f"Copy {sourceElts[el]}", "COPY", "all", sourceElts[el]))
+            self.rcuButons[-1].grid(row=currentLine, column=2)
 
         # Ligne k : vide
         currentLine += 1
         Label(self.window, text="Change values:", borderwidth=5, font='Helvetica 12 bold').grid(
             row=currentLine, column=2)
 
-        # Ligne l : definition label
+        # Ligne l : macs label button change
         currentLine += 1
         Label(self.window, text='Label:', borderwidth=5).grid(row=currentLine, column=1)
         self.macsLabel = StringVar()
-        self.macsLabel.set(self.model.getValue("macsLabel"))
+        self.macsLabel.set(self.controller.getValue("macsLabel"))
         self.macsLabel.trace("w", lambda name, index, mode, sv=self.macsLabel: self.onMacsLabelSelected(self.macsLabel.get()))
-        Entry(self.window, textvariable=self.macsLabel, width=4).grid(row=currentLine, column=2)
-        Button(self.window, text="Change", command=self.onMacsLabelApply).grid(row=currentLine, column=3)
+        self.labelEntry = Entry(self.window, textvariable=self.macsLabel, width=4).grid(row=currentLine, column=2)
+        self.textReplacerButons.append(TextReplacerButton(self.window, self.controller, "Change", "sics", "fr.dga.sics.profile.cfg", self.onMacsLabelApply))
+        self.textReplacerButons[-1].grid(row=currentLine, column=3)
 
         # Ligne m : definition PORT COM
         currentLine += 1
         Label(self.window, text='Com port:', borderwidth=5).grid(row=currentLine, column=1)
-        self.portComButton = PortComMenuButton(self.window, self.controller, self.model.getValue("macsComPort")).grid(row=currentLine, column=2)
-        Button(self.window, text="Change", command=self.onMacsComPortApply).grid(row=currentLine, column=3)
+        self.portComButton = PortComMenuButton(self.window, self.controller, self.controller.getValue("macsComPort")).grid(row=currentLine, column=2)
+        self.textReplacerButons.append(TextReplacerButton(self.window, self.controller, "Change", "macs","com.bull.mil.macs.conf.xml", self.onMacsComPortApply))
+        self.textReplacerButons[-1].grid(row=currentLine, column=3)
 
-        # Ligne n : Configuration change
+        # Ligne n : channels configuratio Configuration change
         currentLine += 1
         Label(self.window, text='Channels configuration:', borderwidth=5).grid(row=currentLine, column=1)
-        self.channelsConfMenuButton = ChannelsConfMenuButton(self.window, self.controller, self.model.getValue("macsChannelsConf")).grid(row=currentLine, column=2)
-        Button(self.window, text="Change", command=self.onMacsChannelsConfApply).grid(row=currentLine, column=3)
+        self.channelsConfMenuButton = ChannelsConfMenuButton(self.window, self.controller, self.controller.getValue("macsChannelsConf")).grid(row=currentLine, column=2)
+        self.textReplacerButons.append(TextReplacerButton(self.window, self.controller, "Change", "macs", "com.bull.mil.macs.conf.xml", self.channelsConfMenuButton))
+        self.textReplacerButons[-1].grid(row=currentLine, column=3)
 
         # Ligne o : vide
         currentLine += 1
@@ -128,6 +164,10 @@ class View(ModelEvent):
     def refreshMMI(self):
         for btn in self.rcuButons:
             btn.refreshMMI()
+        for btn in self.textReplacerButons:
+            btn.refreshMMI()
+
+
 
     # On click actions
 
@@ -137,14 +177,23 @@ class View(ModelEvent):
 
     # when file modification is asked
     def onMacsLabelApply(self):
+        path = self.controller.getPath("fr.dga.sics.profile.cfg", "sics")
+        if path == None:
+            print("Impossible to replace text in", self.element, "path cannot be found")
         self.controller.onMacsLabelApply()
 
     # when file modification is asked
     def onMacsComPortApply(self):
+        path = self.controller.getPath("com.bull.mil.macs.conf.xml", "macs")
+        if path == None:
+            print("Impossible to replace text in", self.element, "path cannot be found")
         self.controller.onMacsComPortApply()
 
     # when file modification is asked
     def onMacsChannelsConfApply(self):
+        path = self.controller.getPath("com.bull.mil.macs.conf.xml", "macs")
+        if path == None:
+            print("Impossible to replace text in", self.element, "path cannot be found")
         self.controller.onMacsChannelsConfApply()
 
     #End on click actions
@@ -170,8 +219,13 @@ class View(ModelEvent):
         #    self.channelsConfMenuButton.configure(text=value)
 
     def onInfoLabelUpdate(self, value):
-        print ("value is", value)
+        print ("onInfoLabelUpdate entry", value)
         self.infoLabel.setTexte(value)
+
+    # operation is "created", "removed", "unzipped"
+    def onFileOrDirUpdated(self, path, operation):
+        self.infoLabel.setTexte(f"{path} has been {operation}")
+        self.refreshMMI()
 
 
 

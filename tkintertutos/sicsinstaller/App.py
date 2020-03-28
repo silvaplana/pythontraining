@@ -22,7 +22,7 @@ class App:
         controller = Controller(aModelResource)
         # view
         fenetre = Tk()
-        view = View(fenetre, controller, aModelResource)
+        view = View(fenetre, controller)
         model.registerModelEvent(view)
 
 
