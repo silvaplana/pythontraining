@@ -12,17 +12,19 @@ class FileOp:
 
     def removeFileOrDir (self, aPath):
         if aPath!=None and os.path.exists(aPath):
-            p = aPath.replace("/", "\\")
-            if os.path.isFile(aPath):
+            if os.path.isfile(aPath):
+                print("Removing file ", aPath)
                 os.remove(aPath)
             elif os.path.isdir(aPath):
-                shutil.rmtree(p)
+                print("Removing dir ", aPath)
+                shutil.rmtree(aPath)
 
     def copyFileOrDir(self, srcPath, destDirPath):
         if srcPath!=None and os.path.exists(srcPath) and destDirPath!=None and os.path.exists(destDirPath):
-            s = srcPath.replace("/", "\\")
-            d = destDirPath.replace("/", "\\")
-            shutil.copyfile(s, d)
+            #s = srcPath.replace("/", "\\")
+            #d = destDirPath.replace("/", "\\")
+            print ("Copying", srcPath, "to", destDirPath)
+            shutil.copy2(srcPath,destDirPath)
 
     def unzipFile(self, srcFilePath, destDirPath):
         with ZipFile(srcFilePath, "r") as zipObj:

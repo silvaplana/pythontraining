@@ -16,7 +16,6 @@ class WaitingThread(threading.Thread):
     def run(self):
         while self.index>0:
             self.index =  self.index-1
-            print ( "index is", self.index)
             sleep(0.1)
         self.infoLabel.v.set("")
         print("     text configured :[]")

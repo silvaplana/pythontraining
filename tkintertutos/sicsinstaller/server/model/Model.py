@@ -63,7 +63,7 @@ class Model:
             else:
                 zipElements2 = []
                 for e in zipElements:
-                    zipElements2.append(f"{self.getSourceDest()}\\{e}")
+                    zipElements2.append(f"{sourceDir}/{e}")
                 return zipElements2
 
     def getSourceElements(self, withPath):

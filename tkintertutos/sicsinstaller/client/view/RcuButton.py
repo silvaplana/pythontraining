@@ -22,13 +22,24 @@ class RcuButton(Button):
         if self.operation == "REMOVE":
             self.controller.removeFileOrDir(self.controller.getPath(self.element, self.hintSearch))
         if self.operation == "COPY":
+            sourcePath = None
+            destPath = None
+            if not self.__isArchive__():
+                for sourceEltWithPath in self.controller.getSourceElements(True):
+                    if self.element in sourceEltWithPath:
+                        sourcePath = sourceEltWithPath
+                        break
+                destPath = self.controller.getPath(self.element, self.hintSearch)
+            else:
+                for sourceEltZipWithPath in self.controller.getZipElements(True):
+                    if self.element in sourceEltZipWithPath:
+                        sourcePath = sourceEltZipWithPath
+                        break
+                if "macs" in self.element:
+                    destPath = self.controller.getValue("macsHierarchy")
+                elif "sics" in self.element:
+                    destPath = self.controller.getValue("sicsHierarchy")
 
-            sourcePath = ""
-            for sourceEltWithPath in self.controller.getSourceElements(True):
-                if self.element in sourceEltWithPath:
-                    sourcePath = sourceEltWithPath
-                    break
-            destPath = self.controller.getPath(self.element, self.hintSearch)
             if sourcePath == None:
                 print ("Impossible to copy ",self.element," source path cannot be found")
             elif destPath == None:
@@ -70,9 +81,9 @@ class RcuButton(Button):
             # for zip element it is only possible to unzip if the zip is at the good place in dest hierarchy
             path = ""
             if self.hintSearch == "macs":
-                path = self.model.getValue("macsHierarchy")
+                path = self.controller.getValue("macsHierarchy")
             else:
-                path = self.model.getValue("sicsHierarchy")
+                path = self.controller.getValue("sicsHierarchy")
             path += f"/{self.element}"
             if self.controller.doesPathExist(path):
                 self.config(state='normal')
@@ -80,7 +91,7 @@ class RcuButton(Button):
                 self.config(state='disabled')
 
     def __isArchive__(self):
-        if self.element.endsWith("zip"):
+        if self.element.endswith("zip"):
             return True
         else:
             return False
