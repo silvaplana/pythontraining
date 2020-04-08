@@ -21,8 +21,6 @@ class FileOp:
 
     def copyFileOrDir(self, srcPath, destDirPath):
         if srcPath!=None and os.path.exists(srcPath) and destDirPath!=None and os.path.exists(destDirPath):
-            #s = srcPath.replace("/", "\\")
-            #d = destDirPath.replace("/", "\\")
             print ("Copying", srcPath, "to", destDirPath)
             shutil.copy2(srcPath,destDirPath)
 
@@ -35,8 +33,8 @@ class FileOp:
 
 
 
-    # in a ascii file composed with line  composed with pattern  beacon1 = value  beacon2 = value , replaces the value for a specified beacon
-    def replaceBeaconValueInFile(self, filePath, beacon, replacingValue):
+    # in a ascii file composed with lines composed with pattern  key1 = value  key2 = value , replaces the value for a specified key
+    def replaceValueInMutiKeyValueFile(self, filePath, key, replacingValue):
         if not os.path.exists(filePath):
             print("The file", filePath, "does not exist")
             return
@@ -44,7 +42,7 @@ class FileOp:
         f = open(filePath, "r")
         fileInArray = []
         for l in f:
-            fileInArray.append(self.__replaceBeaconValue__(l, beacon, replacingValue))
+            fileInArray.append(self.__replaceValueInKeyValue__(l, key, replacingValue))
         f.close()
         os.remove(filePath)
 
@@ -60,17 +58,17 @@ class FileOp:
 
 
 
-    # in a string composed with pattern  beacon1 = value  beacon2 = value , replaces the value for a specified beacon
-    def __replaceBeaconValue__(self, string, beacon, replacingValue):
-        string2 = self.__removeBlanksBetweenBeaconAndEqual__(string, beacon)
+    # in a string composed with pattern  key1 = value  key2 = value , replaces the value for a specified key
+    def __replaceValueInKeyValue__(self, string, key, replacingValue):
+        string2 = self.__removeBlanksBetweenKeyAndEqual__(string, key)
         res = ""
         first = True
         for group in string2.split():
             newGroup = ""
-            if not beacon in group:
+            if not key in group:
                 newGroup = group
             else:
-                newGroup = f"{beacon}={replacingValue}"
+                newGroup = f"{key}={replacingValue}"
             if first:
                 res = newGroup
             else:
@@ -78,9 +76,9 @@ class FileOp:
             first = False
         return res
 
-    # in a string composed with pattern  beacon1 = value  beacon2 = value ,   removes the blanks between beacon and value
-    def __removeBlanksBetweenBeaconAndEqual__(self, string, beacon):
-        if not beacon in string:
+    # in a string composed with pattern  key1 = value  key2 = value ,   removes the blanks between key and value
+    def __removeBlanksBetweenKeyAndEqual__(self, string, key):
+        if not key in string:
             return string
         finished = False
         f = string
